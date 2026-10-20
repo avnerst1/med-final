@@ -23,10 +23,20 @@ class Topic:
         return self._add(dict(t="num", q=q, v=v, tol=tol, u=u, e=e))
 
 
-def write(exam, version, topics):
+def write(exam, version, topics, outline):
+    """outline: [(part, [(chapter, [topic ids])])]. Sets part/chapter on each topic and orders them like the book."""
+    by_id = {t.d["id"]: t.d for t in topics}
+    ordered = []
+    for part, chapters in outline:
+        for chapter, ids in chapters:
+            for tid in ids:
+                d = by_id.pop(tid)
+                d["part"], d["chapter"] = part, chapter
+                ordered.append(d)
+    assert not by_id, f"topics missing from outline: {list(by_id)}"
     os.makedirs(OUT, exist_ok=True)
-    data = dict(exam=exam, version=version, topics=[t.d for t in topics])
+    data = dict(exam=exam, version=version, topics=ordered)
     with open(os.path.join(OUT, f"{exam}.json"), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
-    n = sum(len(t.d["cards"]) for t in topics)
-    print(f"{exam}: {len(topics)} topics, {n} cards")
+    n = sum(len(t["cards"]) for t in ordered)
+    print(f"{exam}: {len(ordered)} topics, {n} cards")

@@ -91,6 +91,13 @@ textarea{min-height:70px;resize:vertical}
 .seg button{flex:1;border:0;background:none;border-radius:9px;padding:7px;cursor:pointer;font-size:14px}
 .seg button.on{background:var(--surface);font-weight:700;box-shadow:var(--shadow)}
 .progress{height:4px;background:var(--surface2);border-radius:99px;margin-bottom:12px;overflow:hidden} .progress i{display:block;height:100%;background:var(--ex)}
+.part{border-bottom:1px solid var(--border)} .part:last-child{border-bottom:0}
+.part .item{border-bottom:0}
+.part-h .title{font-size:17px}
+.chapter{margin-inline-start:10px;padding-inline-start:10px;border-inline-start:2px solid var(--surface2);margin-bottom:8px}
+.ch-h .title{color:var(--ex);font-size:15px}
+.item.topic{padding:8px 0}
+.switch.partial input:not(:checked)+span{background:color-mix(in srgb,var(--ex) 40%,var(--border))}
 label.f{display:block;font-size:14px;color:var(--muted);margin:10px 0 4px}
 </style>
 </head>
@@ -199,6 +206,7 @@ function buildQueue(opts={}){
   const now = Date.now(); const st = S();
   const pool = allCards().filter(x => {
     if(opts.topic) return x.topic.id === opts.topic;
+    if(opts.ids) return opts.ids.includes(x.topic.id);
     return isEnabled(x.topic.id);
   }).filter(x => !(cs(x.key)||{}).suspended);
   if(opts.cram) return shuffle(pool);
@@ -207,7 +215,7 @@ function buildQueue(opts={}){
   }
   const due = pool.filter(x => cs(x.key) && cs(x.key).due <= now).sort((a,b)=>cs(a.key).due-cs(b.key).due);
   const fresh = pool.filter(x => !cs(x.key));
-  const limit = opts.topic ? fresh.length : Math.max(0, st.settings.newPerDay - newSeenToday());
+  const limit = (opts.topic || opts.ids) ? fresh.length : Math.max(0, st.settings.newPerDay - newSeenToday());
   return due.concat(shuffleWithinTopic(fresh).slice(0, limit));
 }
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
@@ -287,7 +295,7 @@ VIEWS.home = function(){
 function pickTopicSheet(){
   openSheet(`<h2>בחר נושא</h2><input type="search" id="pk" placeholder="חפש מחלה..."><div class="list" id="pkl"></div>`);
   const draw = () => { const q=$("#pk").value.trim().toLowerCase();
-    $("#pkl").innerHTML = topics().filter(t => match(t,q)).map(t=>`<div class="item" data-t="${t.id}" style="cursor:pointer"><div class="grow"><div class="title">${esc(t.he)}</div><div class="sub ltr" style="text-align:right">${esc(t.name)} · ${t.cards.length} כרטיסים</div></div></div>`).join(""); };
+    $("#pkl").innerHTML = topics().filter(t => match(t,q)).map(t=>`<div class="item" data-t="${t.id}" style="cursor:pointer"><div class="grow"><div class="title">${esc(t.he)}</div><div class="sub">${esc(partOf(t))} › ${esc(chapterOf(t))} · ${t.cards.length} כרטיסים</div></div></div>`).join(""); };
   draw(); $("#pk").oninput=draw;
   $("#pkl").onclick = e => { const it=e.target.closest("[data-t]"); if(it){ closeSheet(); startSession({topic:it.dataset.t}); } };
 }
@@ -423,36 +431,71 @@ function summarySheet(tid){
 }
 
 /* ---------- search & topic page ---------- */
-function match(t,q){ if(!q) return true; return [t.he,t.name,t.family,(t.tags||[]).join(" ")].join(" ").toLowerCase().includes(q); }
+function partOf(t){ return t.part || "הנושאים שלי"; }
+function chapterOf(t){ return t.chapter || t.family || "כללי"; }
+function match(t,q){ if(!q) return true; return [t.he,t.name,partOf(t),chapterOf(t),(t.tags||[]).join(" ")].join(" ").toLowerCase().includes(q); }
+// book outline: [{part, chapters:[{chapter, topics:[...]}]}], in the order the deck lists them
+function outline(list){
+  const parts=[];
+  list.forEach(t => {
+    let p=parts.find(x=>x.part===partOf(t)); if(!p){ p={part:partOf(t), chapters:[]}; parts.push(p); }
+    let c=p.chapters.find(x=>x.chapter===chapterOf(t)); if(!c){ c={chapter:chapterOf(t), topics:[]}; p.chapters.push(c); }
+    c.topics.push(t);
+  });
+  return parts;
+}
+function setEnabled(ids, on){ ids.forEach(id => { if(on) S().enabled[id]=true; else delete S().enabled[id]; }); save(); }
 VIEWS.search = function(){
   if(app.topicFilter) return topicPage(app.topicFilter);
   $("#view").innerHTML = `
-    <input type="search" id="q" placeholder="חפש מחלה, פרוצדורה או משפחה (עברית או אנגלית)" value="${esc(app._q||'')}">
+    <input type="search" id="q" placeholder="חפש מחלה, פרק או מערכת (עברית או אנגלית)" value="${esc(app._q||'')}">
     <div class="row" style="margin:10px 0"><div class="seg grow" id="flt">
       <button data-f="all" class="${(app._f||'all')==='all'?'on':''}">הכל</button>
       <button data-f="on" class="${app._f==='on'?'on':''}">ברוטציה</button>
       <button data-f="off" class="${app._f==='off'?'on':''}">לא פעילים</button></div>
       <button class="btn sm" data-a="new">+ נושא</button></div>
     <div class="card" style="padding:4px 16px"><div class="list" id="res"></div></div>`;
+  const sw = (attr, on, partial) => `<label class="switch${partial?' partial':''}"><input type="checkbox" ${attr} ${on?'checked':''}><span></span></label>`;
   const draw = () => {
     const q=($("#q").value||"").trim().toLowerCase(); app._q=$("#q").value; const f=app._f||"all";
     const list = topics().filter(t => match(t,q) && (f==="all" || (f==="on")===isEnabled(t.id)));
-    const fam = {}; list.forEach(t => (fam[t.family||"אחר"] ||= []).push(t));
-    $("#res").innerHTML = list.length ? Object.entries(fam).map(([f,ts]) =>
-      `<div class="small muted" style="padding-top:10px">${esc(f)}</div>` + ts.map(t => {
-        const c=counts({topic:t.id});
-        return `<div class="item"><div class="grow" data-open="${t.id}" style="cursor:pointer"><div class="title">${esc(t.he)}</div>
-          <div class="sub"><span class="ltr">${esc(t.name)}</span> · ${t.cards.length} כרטיסים${c.learned?` · ${c.learned} בלמידה`:''}</div></div>
-          <label class="switch"><input type="checkbox" data-tog="${t.id}" ${isEnabled(t.id)?'checked':''}><span></span></label></div>`; }).join("")).join("")
+    app._tree = outline(list); app._openParts = app._openParts || {};
+    $("#res").innerHTML = list.length ? app._tree.map((p,pi) => {
+      const pids = p.chapters.flatMap(c=>c.topics.map(t=>t.id)); const pon = pids.filter(isEnabled).length;
+      const open = q || app._openParts[p.part];
+      return `<div class="part">
+        <div class="item part-h"><div class="grow" data-part="${pi}" style="cursor:pointer"><div class="title">${open?'▾':'◂'} ${esc(p.part)}</div>
+          <div class="sub">${p.chapters.length} פרקים · ${pids.length} נושאים · ${pon} ברוטציה</div></div>
+          ${sw(`data-tp="${pi}"`, pon===pids.length, pon>0&&pon<pids.length)}</div>
+        ${open ? p.chapters.map((c,ci) => {
+          const cids=c.topics.map(t=>t.id); const con=cids.filter(isEnabled).length;
+          return `<div class="chapter">
+            <div class="item ch-h"><div class="grow"><div class="title">${esc(c.chapter)}</div><div class="sub">${cids.length} נושאים · ${c.topics.reduce((n,t)=>n+t.cards.length,0)} כרטיסים</div></div>
+              <button class="btn sm" data-pc="${pi}.${ci}">תרגל פרק</button>
+              ${sw(`data-tc="${pi}.${ci}"`, con===cids.length, con>0&&con<cids.length)}</div>
+            ${c.topics.map(t => { const n=counts({topic:t.id});
+              return `<div class="item topic"><div class="grow" data-open="${t.id}" style="cursor:pointer"><div>${esc(t.he)}</div>
+                <div class="sub"><span class="ltr">${esc(t.name||'')}</span> · ${t.cards.length} כרטיסים${n.learned?` · ${n.learned} בלמידה`:''}</div></div>
+                ${sw(`data-tog="${t.id}"`, isEnabled(t.id))}</div>`; }).join("")}
+          </div>`; }).join("") : ''}
+      </div>`; }).join("")
       : `<p class="muted" style="padding:12px 0">לא נמצא. אפשר ליצור נושא חדש עם הכפתור "+ נושא".</p>`;
   };
   draw(); $("#q").oninput=draw;
   $("#view").onclick = e => {
     const f=e.target.closest("[data-f]"); if(f){ app._f=f.dataset.f; VIEWS.search(); return; }
     const o=e.target.closest("[data-open]"); if(o){ app.topicFilter=o.dataset.open; topicPage(o.dataset.open); return; }
+    const ph=e.target.closest("[data-part]"); if(ph){ const p=app._tree[+ph.dataset.part].part; app._openParts[p]=!app._openParts[p]; draw(); return; }
+    const pc=e.target.closest("[data-pc]"); if(pc){ const [pi,ci]=pc.dataset.pc.split(".").map(Number); const c=app._tree[pi].chapters[ci]; startSession({ids:c.topics.map(t=>t.id), label:c.chapter}); return; }
     if(e.target.closest('[data-a="new"]')) newTopicSheet();
   };
-  $("#view").onchange = e => { const t=e.target.closest("[data-tog]"); if(t){ S().enabled[t.dataset.tog]=t.checked; if(!t.checked) delete S().enabled[t.dataset.tog]; save(); toast(t.checked?"נוסף לרוטציה":"הוסר מהרוטציה"); } };
+  $("#view").onchange = e => {
+    const tp=e.target.closest("[data-tp]"), tc=e.target.closest("[data-tc]");
+    if(tp||tc){ let ids;
+      if(tp) ids=app._tree[+tp.dataset.tp].chapters.flatMap(c=>c.topics.map(t=>t.id));
+      else { const [pi,ci]=tc.dataset.tc.split(".").map(Number); ids=app._tree[pi].chapters[ci].topics.map(t=>t.id); }
+      setEnabled(ids, e.target.checked); toast(e.target.checked?`${ids.length} נושאים נוספו לרוטציה`:`${ids.length} נושאים הוסרו מהרוטציה`); draw(); return; }
+    const t=e.target.closest("[data-tog]"); if(t){ S().enabled[t.dataset.tog]=t.checked; if(!t.checked) delete S().enabled[t.dataset.tog]; save(); toast(t.checked?"נוסף לרוטציה":"הוסר מהרוטציה"); draw(); } };
 };
 function topicPage(tid){
   const t=topicById(tid); if(!t){ app.topicFilter=null; return VIEWS.search(); }
@@ -460,7 +503,7 @@ function topicPage(tid){
   $("#view").innerHTML = `
     <button class="btn sm" data-a="back">→ חזרה לחיפוש</button>
     <div class="card" style="margin-top:10px">
-      <h1>${esc(t.he)}</h1><div class="muted small ltr" style="text-align:right">${esc(t.name)}${t.source?' · '+esc(t.source):''}</div>
+      <div class="muted small">${esc(partOf(t))} › ${esc(chapterOf(t))}</div><h1>${esc(t.he)}</h1><div class="muted small ltr" style="text-align:right">${esc(t.name)}${t.source?' · '+esc(t.source):''}</div>
       <div class="row" style="margin-top:12px"><span class="grow">ברוטציה</span><label class="switch"><input type="checkbox" id="tog" ${isEnabled(tid)?'checked':''}><span></span></label></div>
       <div class="stats3"><div class="stat"><b>${c.fresh}</b><span class="small muted">חדשים</span></div><div class="stat"><b>${c.learned}</b><span class="small muted">בלמידה</span></div><div class="stat"><b>${c.suspended}</b><span class="small muted">מושהים</span></div></div>
       <div class="row"><button class="btn primary grow" data-a="practice">תרגל רק את הנושא</button><button class="btn" data-a="summary">כרטיס סיכום</button></div>
@@ -497,13 +540,13 @@ function newTopicSheet(){
   openSheet(`<h2>נושא חדש</h2>
     <label class="f">שם בעברית</label><input type="text" id="nh">
     <label class="f">שם באנגלית</label><input type="text" id="ne" dir="ltr">
-    <label class="f">משפחה / מערכת</label><input type="text" id="nf" placeholder="למשל: גסטרו">
+    <label class="f">פרק</label><input type="text" id="nf" placeholder="למשל: מחלות הלבלב">
     <label class="f">כרטיס סיכום (טקסט חופשי)</label><textarea id="ns"></textarea>
     <div class="row" style="margin-top:12px"><button class="btn primary grow" id="ok">צור</button><button class="btn" onclick="closeSheet()">ביטול</button></div>`);
   $("#ok").onclick = () => {
     const he=$("#nh").value.trim(); if(!he){ toast("צריך שם"); return; }
     const id="u"+Date.now().toString(36);
-    S().custom.topics.push({id, he, name:$("#ne").value.trim(), family:$("#nf").value.trim()||"הנושאים שלי", summary: $("#ns").value.trim()?`<p>${esc($("#ns").value.trim()).replace(/\n/g,"<br>")}</p>`:"", source:"שלי", cards:[]});
+    S().custom.topics.push({id, he, name:$("#ne").value.trim(), chapter:$("#nf").value.trim()||"כללי", summary: $("#ns").value.trim()?`<p>${esc($("#ns").value.trim()).replace(/\n/g,"<br>")}</p>`:"", source:"שלי", cards:[]});
     S().enabled[id]=true; save(); closeSheet(); app.topicFilter=id; topicPage(id);
   };
 }
