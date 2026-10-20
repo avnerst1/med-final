@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תרגול גמר</title>
+<meta name="description" content="תרגול כרטיסיות ושאלות למבחני הגמר בפנימית, ילדים וכירורגיה">
+<meta name="theme-color" content="#1f5f8b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="תרגול גמר">
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#fff; --surface2:#eef1f5; --text:#1b2330; --muted:#5f6b7a; --border:#dde2e8;
+  --accent:#1f5f8b; --accent-soft:#e3eef7; --ok:#1e7d4f; --ok-soft:#e2f4ea; --bad:#b3362f; --bad-soft:#f9e4e2; --warn:#9a6a00; --warn-soft:#fbf0d6;
+  --int:#1f5f8b; --ped:#c25a1a; --sur:#2f7d5b;
+  --radius:14px; --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161c; --surface:#1b2129; --surface2:#242b35; --text:#e7ebf0; --muted:#9aa5b3; --border:#2f3843;
+  --accent:#6fb0e0; --accent-soft:#1d3346; --ok:#5cc690; --ok-soft:#173527; --bad:#ef7b72; --bad-soft:#3c1f1d; --warn:#e3b54c; --warn-soft:#3a2f14;
+  --int:#6fb0e0; --ped:#f0965c; --sur:#64c39a; --shadow:none;}}
+:root[data-theme="dark"]{
+  --bg:#12161c; --surface:#1b2129; --surface2:#242b35; --text:#e7ebf0; --muted:#9aa5b3; --border:#2f3843;
+  --accent:#6fb0e0; --accent-soft:#1d3346; --ok:#5cc690; --ok-soft:#173527; --bad:#ef7b72; --bad-soft:#3c1f1d; --warn:#e3b54c; --warn-soft:#3a2f14;
+  --int:#6fb0e0; --ped:#f0965c; --sur:#64c39a; --shadow:none;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",Rubik,Arial,sans-serif;font-size:16px;line-height:1.5}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--border);padding:calc(10px + env(safe-area-inset-top)) 16px 10px}
+.exam-tabs{display:flex;gap:6px}
+.exam-tabs button{flex:1;border:1px solid var(--border);background:var(--surface2);border-radius:10px;padding:8px 4px;font-weight:600;cursor:pointer}
+.exam-tabs button.on{color:#fff;border-color:transparent;background:var(--ex)}
+main{max-width:720px;margin:0 auto;padding:16px}
+nav.bottom{position:fixed;bottom:0;inset-inline:0;z-index:5;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav.bottom button{flex:1;border:0;background:none;padding:6px 2px;border-radius:10px;font-size:12px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.bottom button svg{width:22px;height:22px}
+nav.bottom button.on{color:var(--ex);background:var(--surface2)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+h1{font-size:22px;margin:0 0 4px} h2{font-size:18px;margin:0 0 10px} h3{font-size:16px;margin:14px 0 6px}
+.muted{color:var(--muted)} .small{font-size:13px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{background:var(--surface2);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:24px;line-height:1.2}
+.btn{border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600}
+.btn.primary{background:var(--ex);border-color:transparent;color:#fff}
+.btn.block{display:block;width:100%}
+.btn.sm{padding:6px 10px;font-size:14px;border-radius:10px}
+.btn:disabled{opacity:.5}
+.chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--surface2);color:var(--muted);margin-inline-end:4px}
+.chip.on{background:var(--ok-soft);color:var(--ok)} .chip.off{background:var(--bad-soft);color:var(--bad)} .chip.sus{background:var(--warn-soft);color:var(--warn)}
+input[type=search],input[type=text],input[type=number],textarea,select{width:100%;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:10px 12px}
+textarea{min-height:70px;resize:vertical}
+.list .item{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.list .item:last-child{border-bottom:0}
+.item .title{font-weight:600} .item .sub{font-size:13px;color:var(--muted)}
+.switch{position:relative;width:46px;height:28px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--border);border-radius:999px;transition:.2s;cursor:pointer}
+.switch span:before{content:"";position:absolute;width:22px;height:22px;top:3px;inset-inline-start:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+span{background:var(--ex)}
+.switch input:checked+span:before{transform:translateX(-18px)}
+[dir=ltr] .switch input:checked+span:before{transform:translateX(18px)}
+.q{font-size:18px;font-weight:600;margin:6px 0 14px;white-space:pre-wrap}
+.opt{display:block;width:100%;text-align:start;border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)} .opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.answer{background:var(--surface2);border-radius:12px;padding:12px;margin:12px 0;white-space:pre-wrap}
+.verdict{font-weight:700;margin-bottom:6px} .verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+.rate{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.rate button{border:0;border-radius:12px;padding:10px 4px;font-weight:700;cursor:pointer}
+.rate small{display:block;font-weight:400;font-size:12px;opacity:.85}
+.r-hard{background:var(--bad-soft);color:var(--bad)} .r-med{background:var(--warn-soft);color:var(--warn)} .r-easy{background:var(--ok-soft);color:var(--ok)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.summary{line-height:1.6} .summary ul{padding-inline-start:20px;margin:6px 0} .summary h4{margin:12px 0 4px;color:var(--ex)}
+.ltr{direction:ltr;unicode-bidi:plaintext}
+.bars{display:flex;align-items:flex-end;gap:4px;height:110px;margin-top:8px}
+.bars div{flex:1;background:var(--ex);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.bars div span{position:absolute;top:-18px;inset-inline:0;text-align:center;font-size:11px;color:var(--muted)}
+.barlbl{display:flex;gap:4px;font-size:10px;color:var(--muted)} .barlbl span{flex:1;text-align:center}
+.meter{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden} .meter i{display:block;height:100%;background:var(--ex)}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:var(--surface);width:100%;max-width:720px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom))}
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));inset-inline:16px;margin:auto;max-width:420px;background:var(--text);color:var(--bg);padding:10px 14px;border-radius:12px;text-align:center;z-index:30}
+.hidden{display:none!important}
+.seg{display:flex;background:var(--surface2);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:7px;cursor:pointer;font-size:14px}
+.seg button.on{background:var(--surface);font-weight:700;box-shadow:var(--shadow)}
+.progress{height:4px;background:var(--surface2);border-radius:99px;margin-bottom:12px;overflow:hidden} .progress i{display:block;height:100%;background:var(--ex)}
+label.f{display:block;font-size:14px;color:var(--muted);margin:10px 0 4px}
+</style>
+</head>
+<body>
+<header>
+  <div class="exam-tabs" id="examTabs"></div>
+</header>
+<main id="view"></main>
+<nav class="bottom" id="nav"></nav>
+<div id="sheet" class="sheet hidden"><div id="sheetBody"></div></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+"use strict";
+/* ---------- constants ---------- */
+const EXAMS = {
+  internal:  {name:"פנימית",   book:"Harrison 22e", color:"--int", file:"data/internal.json"},
+  pediatrics:{name:"ילדים",    book:"Nelson 22e",   color:"--ped", file:"data/pediatrics.json"},
+  surgery:   {name:"כירורגיה", book:"Sabiston 22e · ATLS 10e · Apley 5e", color:"--sur", file:"data/surgery.json"}
+};
+const MIN = 60e3, DAY = 864e5;
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  practice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="14" height="16" rx="2"/><path d="M8 3h11a1 1 0 0 1 1 1v14"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  stats:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
+};
+const TABS = [["home","בית"],["practice","תרגול"],["search","חיפוש"],["stats","נתונים"],["settings","הגדרות"]];
+
+/* ---------- storage (each exam fully separate) ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ toast("השמירה נכשלה, כדאי לייצא גיבוי"); } }
+};
+const app = {
+  exam: store.get("mf:exam","internal"),
+  tab: "home",
+  decks: {},       // exam -> base deck from file
+  session: null,   // current practice session
+  topicFilter: null
+};
+function stateKey(ex){ return "mf:"+ex+":state"; }
+function emptyState(){ return {enabled:{}, cards:{}, log:[], custom:{topics:[]}, settings:{newPerDay:20}}; }
+function S(){ if(!app._st || app._stEx!==app.exam){ app._st = Object.assign(emptyState(), store.get(stateKey(app.exam), {})); app._stEx = app.exam; } return app._st; }
+function save(){ store.set(stateKey(app.exam), S()); }
+
+/* ---------- deck loading: network first, cached copy offline ---------- */
+async function loadDeck(ex){
+  if(app.decks[ex]) return app.decks[ex];
+  let deck = null;
+  try{
+    const r = await fetch(EXAMS[ex].file, {cache:"no-cache"});
+    if(r.ok){ deck = await r.json(); store.set("mf:"+ex+":deckcache", deck); }
+  }catch(e){}
+  if(!deck) deck = store.get("mf:"+ex+":deckcache", {topics:[]});
+  app.decks[ex] = deck;
+  return deck;
+}
+function topics(){
+  const base = (app.decks[app.exam]||{topics:[]}).topics;
+  const custom = S().custom.topics;
+  const merged = base.map(t => {
+    const c = custom.find(x => x.id === t.id);
+    return c ? Object.assign({}, t, {cards: t.cards.concat(c.cards||[]), mine: c.mine}) : t;
+  });
+  custom.forEach(c => { if(!base.some(t => t.id === c.id)) merged.push(Object.assign({custom:true}, c)); });
+  return merged;
+}
+function topicById(id){ return topics().find(t => t.id === id); }
+function allCards(){ const out=[]; topics().forEach(t => t.cards.forEach(c => out.push({card:c, topic:t, key:t.id+"/"+c.id}))); return out; }
+function cs(key){ return S().cards[key]; }
+function isEnabled(tid){ return !!S().enabled[tid]; }
+
+/* ---------- spaced repetition ----------
+   New card: hard 10 min, medium 1 day, easy 4 days.
+   Review:   hard x1.2 and ease -0.15, medium x ease, easy x ease x1.3 and ease +0.15.
+   Auto-graded wrong answer: back in 10 min, interval resets to 1 day. */
+function schedule(key, rating, wrong){
+  const st = S(); const now = Date.now();
+  const c = st.cards[key] || {ease:2.5, ivl:0, reps:0, lapses:0, due:0};
+  let ivl;
+  if(wrong){ c.lapses++; c.ease = Math.max(1.3, c.ease-0.2); c.ivl = 0; c.due = now + 10*MIN; c.reps++; st.cards[key]=c; return c; }
+  if(c.ivl <= 0){ ivl = rating==="hard" ? 0 : rating==="med" ? 1 : 4; }
+  else if(rating==="hard"){ ivl = Math.max(1, c.ivl*1.2); c.ease = Math.max(1.3, c.ease-0.15); }
+  else if(rating==="med"){ ivl = c.ivl*c.ease; }
+  else { ivl = c.ivl*c.ease*1.3; c.ease += 0.15; }
+  c.ivl = ivl; c.reps++;
+  c.due = ivl === 0 ? now + 10*MIN : now + Math.round(ivl*DAY);
+  st.cards[key] = c;
+  return c;
+}
+function previewIvl(key, rating){
+  const c = cs(key) || {ease:2.5, ivl:0};
+  let ivl;
+  if(c.ivl<=0) ivl = rating==="hard"?0:rating==="med"?1:4;
+  else if(rating==="hard") ivl=Math.max(1,c.ivl*1.2);
+  else if(rating==="med") ivl=c.ivl*c.ease; else ivl=c.ivl*c.ease*1.3;
+  return fmtIvl(ivl);
+}
+function fmtIvl(d){ if(d===0) return "10 דק׳"; if(d<1.5) return "יום"; if(d<30) return Math.round(d)+" ימים"; if(d<365) return (d/30).toFixed(1).replace(".0","")+" חודשים"; return (d/365).toFixed(1)+" שנים"; }
+function todayStart(){ const d=new Date(); d.setHours(0,0,0,0); return d.getTime(); }
+function newSeenToday(){ const t=todayStart(); return S().log.filter(l => l.t>=t && l.isNew).length; }
+
+function buildQueue(opts={}){
+  const now = Date.now(); const st = S();
+  const pool = allCards().filter(x => {
+    if(opts.topic) return x.topic.id === opts.topic;
+    return isEnabled(x.topic.id);
+  }).filter(x => !(cs(x.key)||{}).suspended);
+  if(opts.cram) return shuffle(pool);
+  if(opts.weak){
+    return pool.filter(x => { const c=cs(x.key); return c && (c.lapses>0 || c.ease<2.2); }).sort((a,b)=>cs(a.key).ease-cs(b.key).ease);
+  }
+  const due = pool.filter(x => cs(x.key) && cs(x.key).due <= now).sort((a,b)=>cs(a.key).due-cs(b.key).due);
+  const fresh = pool.filter(x => !cs(x.key));
+  const limit = opts.topic ? fresh.length : Math.max(0, st.settings.newPerDay - newSeenToday());
+  return due.concat(shuffleWithinTopic(fresh).slice(0, limit));
+}
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function shuffleWithinTopic(a){ return a; } // keeps the book order inside each topic for new cards
+function counts(opts){
+  const now=Date.now(); let due=0, fresh=0, learned=0, suspended=0, total=0;
+  allCards().forEach(x => {
+    if(opts && opts.topic ? x.topic.id!==opts.topic : !isEnabled(x.topic.id)) return;
+    total++; const c=cs(x.key);
+    if(c && c.suspended) suspended++;
+    else if(!c) fresh++;
+    else { learned++; if(c.due<=now) due++; }
+  });
+  return {due, fresh, learned, suspended, total};
+}
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+function esc(s){ return String(s??"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.remove("hidden"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.add("hidden"),2200); }
+function openSheet(html){ $("#sheetBody").innerHTML=html; $("#sheet").classList.remove("hidden"); }
+function closeSheet(){ $("#sheet").classList.add("hidden"); }
+$("#sheet").addEventListener("click", e => { if(e.target.id==="sheet") closeSheet(); });
+function typeName(t){ return t==="mcq"?"אמריקאית":t==="num"?"מספרית":"כרטיסייה"; }
+
+/* ---------- chrome ---------- */
+function renderChrome(){
+  document.documentElement.style.setProperty("--ex", `var(${EXAMS[app.exam].color})`);
+  $("#examTabs").innerHTML = Object.entries(EXAMS).map(([k,v]) => `<button data-ex="${k}" class="${k===app.exam?'on':''}">${v.name}</button>`).join("");
+  $("#nav").innerHTML = TABS.map(([k,l]) => `<button data-tab="${k}" class="${k===app.tab?'on':''}">${ICONS[k]}<span>${l}</span></button>`).join("");
+}
+$("#examTabs").addEventListener("click", async e => {
+  const b=e.target.closest("button"); if(!b) return;
+  app.exam=b.dataset.ex; store.set("mf:exam",app.exam); app.session=null; app.topicFilter=null;
+  await loadDeck(app.exam); go(app.tab==="practice"?"home":app.tab);
+});
+$("#nav").addEventListener("click", e => { const b=e.target.closest("button"); if(b) go(b.dataset.tab); });
+function go(tab){ app.tab=tab; renderChrome(); window.scrollTo(0,0); VIEWS[tab](); }
+
+/* ---------- views ---------- */
+const VIEWS = {};
+VIEWS.home = function(){
+  const c = counts(); const en = topics().filter(t=>isEnabled(t.id)).length;
+  const today = S().log.filter(l=>l.t>=todayStart()).length;
+  $("#view").innerHTML = `
+    <div class="card">
+      <h1>${EXAMS[app.exam].name}</h1>
+      <div class="muted small ltr" style="text-align:right">${EXAMS[app.exam].book}</div>
+      <div class="stats3">
+        <div class="stat"><b>${c.due}</b><span class="small muted">לחזרה עכשיו</span></div>
+        <div class="stat"><b>${Math.min(c.fresh, Math.max(0,S().settings.newPerDay-newSeenToday()))}</b><span class="small muted">חדשים להיום</span></div>
+        <div class="stat"><b>${today}</b><span class="small muted">נענו היום</span></div>
+      </div>
+      ${en===0 ? `<p class="muted">עדיין לא הוספת נושאים לרוטציה. היכנס לחיפוש והפעל מחלות שאתה רוצה לתרגל.</p>
+        <button class="btn primary block" data-act="search">לחיפוש נושאים</button>`
+      : `<button class="btn primary block" data-act="start">התחל תרגול</button>
+         <p class="small muted" style="margin:8px 0 0">${en} נושאים ברוטציה · ${c.learned} כרטיסים בלמידה · ${c.suspended} מושהים</p>`}
+    </div>
+    <div class="card">
+      <h2>מצבי תרגול נוספים</h2>
+      <div class="list">
+        <div class="item"><div class="grow"><div class="title">נושא ספציפי</div><div class="sub">כל הכרטיסים של מחלה אחת, גם אם לא ברוטציה</div></div><button class="btn sm" data-act="pick">בחר</button></div>
+        <div class="item"><div class="grow"><div class="title">חולשות</div><div class="sub">כרטיסים שטעית בהם או סימנת קשה</div></div><button class="btn sm" data-act="weak">התחל</button></div>
+        <div class="item"><div class="grow"><div class="title">חזרה מהירה לפני מבחן</div><div class="sub">כל הרוטציה בסדר אקראי, בלי לשנות את הלו״ז</div></div><button class="btn sm" data-act="cram">התחל</button></div>
+      </div>
+    </div>`;
+  $("#view").onclick = e => {
+    const a = e.target.closest("[data-act]"); if(!a) return;
+    const act=a.dataset.act;
+    if(act==="search") go("search");
+    else if(act==="start") startSession({});
+    else if(act==="weak") startSession({weak:true});
+    else if(act==="cram") startSession({cram:true});
+    else if(act==="pick") pickTopicSheet();
+  };
+};
+function pickTopicSheet(){
+  openSheet(`<h2>בחר נושא</h2><input type="search" id="pk" placeholder="חפש מחלה..."><div class="list" id="pkl"></div>`);
+  const draw = () => { const q=$("#pk").value.trim().toLowerCase();
+    $("#pkl").innerHTML = topics().filter(t => match(t,q)).map(t=>`<div class="item" data-t="${t.id}" style="cursor:pointer"><div class="grow"><div class="title">${esc(t.he)}</div><div class="sub ltr" style="text-align:right">${esc(t.name)} · ${t.cards.length} כרטיסים</div></div></div>`).join(""); };
+  draw(); $("#pk").oninput=draw;
+  $("#pkl").onclick = e => { const it=e.target.closest("[data-t]"); if(it){ closeSheet(); startSession({topic:it.dataset.t}); } };
+}
+
+/* ---------- practice ---------- */
+function startSession(opts){
+  const q = buildQueue(opts);
+  if(!q.length){ toast(opts.weak?"אין כרטיסים חלשים כרגע":"אין כרטיסים לתרגול כרגע"); return; }
+  app.session = {opts, queue:q, i:0, done:0, right:0};
+  go("practice");
+}
+VIEWS.practice = function(){
+  const s = app.session;
+  if(!s || s.i >= s.queue.length){
+    const c = counts();
+    $("#view").innerHTML = `<div class="card">
+      ${s ? `<h2>סיימת את הסבב 🎉</h2><p>${s.done} כרטיסים${s.done?` · ${Math.round(100*s.right/Math.max(1,s.graded||0))||0}% נכון בשאלות שנבדקו אוטומטית`:''}</p>` : `<h2>תרגול</h2>`}
+      <p class="muted">${c.due} לחזרה עכשיו, ${c.fresh} חדשים ברוטציה.</p>
+      <button class="btn primary block" data-a="again" ${c.due+c.fresh?'':'disabled'}>התחל סבב</button></div>`;
+    $("#view").onclick = e => { if(e.target.closest('[data-a="again"]')) startSession({}); };
+    app.session = null; return;
+  }
+  const x = s.queue[s.i]; const card = x.card; s.answered=false; s.wrong=false;
+  const pct = Math.round(100*s.i/s.queue.length);
+  let body = "";
+  if(card.t==="mcq"){
+    body = card.o.map((o,i)=>`<button class="opt" data-o="${i}">${esc(o)}</button>`).join("");
+  } else if(card.t==="num"){
+    body = `<div class="row"><input type="number" step="any" inputmode="decimal" id="numIn" class="grow" placeholder="התשובה שלך">${card.u?`<span class="muted">${esc(card.u)}</span>`:''}</div>
+      <button class="btn primary block" style="margin-top:10px" data-a="check">בדוק</button>`;
+  } else {
+    body = `<textarea id="selfAns" placeholder="אפשר לכתוב כאן את התשובה שלך לפני שחושפים (לא חובה)"></textarea>
+      <button class="btn primary block" style="margin-top:10px" data-a="reveal">הצג תשובה</button>`;
+  }
+  $("#view").innerHTML = `
+    <div class="progress"><i style="width:${pct}%"></i></div>
+    <div class="row small muted"><span class="grow">${esc(x.topic.he)} · ${typeName(card.t)}</span><span>${s.i+1}/${s.queue.length}</span></div>
+    <div class="card">
+      <div class="q">${esc(card.q)}</div>
+      <div id="ansArea">${body}</div>
+      <div id="after"></div>
+    </div>`;
+  const ni=$("#numIn"); if(ni) ni.addEventListener("keydown",e=>{ if(e.key==="Enter") checkNum(); });
+  $("#view").onclick = e => {
+    const o=e.target.closest("[data-o]"); if(o && !s.answered) return answerMcq(+o.dataset.o);
+    const a=e.target.closest("[data-a]"); if(!a) return;
+    const act=a.dataset.a;
+    if(act==="check") checkNum();
+    else if(act==="reveal") reveal(null);
+    else if(["hard","med","easy"].includes(act)) rate(act);
+    else if(act==="suspend") suspendCur();
+    else if(act==="summary") summarySheet(x.topic.id);
+    else if(act==="edit") editCardSheet(x.topic.id, card.id);
+  };
+};
+function answerMcq(i){
+  const s=app.session, card=s.queue[s.i].card; const ok = i===card.c;
+  document.querySelectorAll(".opt").forEach((b,j)=>{ if(j===card.c) b.classList.add("right"); else if(j===i) b.classList.add("wrong"); b.disabled=true; });
+  reveal(ok, i);
+}
+function checkNum(){
+  const s=app.session, card=s.queue[s.i].card; const v=parseFloat($("#numIn").value);
+  if(isNaN(v)){ toast("הקלד מספר"); return; }
+  const tol = card.tol ?? 0; const ok = Math.abs(v-card.v) <= tol + 1e-9;
+  $("#numIn").disabled=true; reveal(ok, v);
+}
+function reveal(ok, given){
+  const s=app.session; if(s.answered) return; s.answered=true; const x=s.queue[s.i]; const card=x.card;
+  s.wrong = ok===false; s.lastGiven = given;
+  if(ok!==null){ s.graded=(s.graded||0)+1; if(ok) s.right++; }
+  const k=x.key;
+  let ans = "";
+  if(card.t==="mcq") ans = `<div class="verdict ${ok?'ok':'bad'}">${ok?'נכון':'לא נכון'}</div><div><b>${esc(card.o[card.c])}</b></div>`;
+  else if(card.t==="num") ans = `<div class="verdict ${ok?'ok':'bad'}">${ok?'נכון':'לא נכון'}</div><div><b>${esc(card.v)}${card.u?' '+esc(card.u):''}</b>${card.tol?` <span class="muted small">(טווח מקובל ±${card.tol})</span>`:''}</div>`;
+  else ans = `<div>${esc(card.a)}</div>`;
+  if(card.e) ans += `<div class="small" style="margin-top:8px">${esc(card.e)}</div>`;
+  const ra = s.opts.cram ? `<button class="btn primary block" style="margin-top:10px" data-a="med">הבא</button>` :
+    `<div class="rate">
+      <button class="r-hard" data-a="hard">קשה<small>${s.wrong?'10 דק׳':previewIvl(k,'hard')}</small></button>
+      <button class="r-med" data-a="med">בינוני<small>${s.wrong?'10 דק׳':previewIvl(k,'med')}</small></button>
+      <button class="r-easy" data-a="easy">קל<small>${s.wrong?'10 דק׳':previewIvl(k,'easy')}</small></button>
+    </div>`;
+  $("#after").innerHTML = `<div class="answer">${ans}</div>${ra}
+    <div class="tools">
+      <button class="btn sm" data-a="summary">כרטיס סיכום</button>
+      <a class="btn sm" target="_blank" rel="noopener" href="${esc(aiUrl('claude'))}" style="text-decoration:none">שאל את Claude</a>
+      <a class="btn sm" target="_blank" rel="noopener" href="${esc(aiUrl('gpt'))}" style="text-decoration:none">שאל את ChatGPT</a>
+      <button class="btn sm" data-a="suspend">השהה כרטיס</button>
+      <button class="btn sm" data-a="edit">ערוך</button>
+    </div>`;
+  if(card.t==="flash"){ const ta=$("#selfAns"); if(ta) ta.readOnly=true; const b=document.querySelector('[data-a="reveal"]'); if(b) b.remove(); }
+  if(card.t==="num"){ const b=document.querySelector('[data-a="check"]'); if(b) b.remove(); }
+}
+function rate(r){
+  const s=app.session; const x=s.queue[s.i];
+  if(!s.opts.cram){
+    const isNew = !cs(x.key);
+    const c = schedule(x.key, r, s.wrong);
+    S().log.push({t:Date.now(), k:x.key, r, ok: s.wrong?0:1, isNew});
+    if(S().log.length>20000) S().log.splice(0, S().log.length-20000);
+    save();
+    // cards due again within this sitting go back to the end of the queue
+    if(c.due - Date.now() <= 15*MIN) s.queue.push(x);
+  }
+  s.done++; s.i++; VIEWS.practice();
+}
+function suspendCur(){
+  const s=app.session; const x=s.queue[s.i]; const st=S();
+  st.cards[x.key] = Object.assign(st.cards[x.key]||{ease:2.5,ivl:0,reps:0,lapses:0,due:0}, {suspended:true});
+  save(); toast("הכרטיס הושהה. אפשר להחזיר אותו מעמוד הנושא");
+  s.queue = s.queue.filter((q,j)=> j<=s.i || q.key!==x.key);
+  s.i++; VIEWS.practice();
+}
+function aiUrl(which){
+  const s=app.session; const x=s.queue[s.i]; const c=x.card;
+  let txt = `אני סטודנט לרפואה שנה שישית ומתכונן למבחן הגמר ב${EXAMS[app.exam].name} (ספר: ${EXAMS[app.exam].book}).\nנושא: ${x.topic.he} (${x.topic.name})\n\nשאלה: ${c.q}\n`;
+  if(c.t==="mcq") txt += "אפשרויות:\n"+c.o.map((o,i)=>`${i+1}. ${o}`).join("\n")+`\nהתשובה הנכונה לפי הכרטיס: ${c.o[c.c]}\n`;
+  else if(c.t==="num") txt += `התשובה לפי הכרטיס: ${c.v} ${c.u||''}\n`;
+  else txt += `התשובה לפי הכרטיס: ${c.a}\n`;
+  if(s.lastGiven!==undefined && s.lastGiven!==null) txt += `התשובה שלי: ${c.t==="mcq"?c.o[s.lastGiven]:s.lastGiven}\n`;
+  const sa=$("#selfAns"); if(c.t==="flash" && sa && sa.value.trim()) txt += `התשובה שלי: ${sa.value.trim()}\n`;
+  txt += "\nתסביר לי בקצרה למה זו התשובה, מה ההיגיון שעוזר לזכור, ומה עוד כדאי לדעת על הנושא למבחן. אם הכרטיס שגוי או לא מעודכן, תגיד.";
+  return which==="claude" ? "https://claude.ai/new?q="+encodeURIComponent(txt) : "https://chatgpt.com/?q="+encodeURIComponent(txt);
+}
+
+/* ---------- summary card ---------- */
+function summarySheet(tid){
+  const t=topicById(tid);
+  openSheet(`<div class="row"><h2 class="grow">${esc(t.he)}</h2><button class="btn sm" onclick="closeSheet()">סגור</button></div>
+    <div class="muted small ltr" style="text-align:right">${esc(t.name)}${t.source?' · '+esc(t.source):''}</div>
+    <div class="summary">${t.summary || '<p class="muted">אין עדיין כרטיס סיכום לנושא הזה.</p>'}</div>
+    ${t.mine && t.mine.notes ? `<h3>ההערות שלי</h3><div class="answer">${esc(t.mine.notes)}</div>`:''}`);
+}
+
+/* ---------- search & topic page ---------- */
+function match(t,q){ if(!q) return true; return [t.he,t.name,t.family,(t.tags||[]).join(" ")].join(" ").toLowerCase().includes(q); }
+VIEWS.search = function(){
+  if(app.topicFilter) return topicPage(app.topicFilter);
+  $("#view").innerHTML = `
+    <input type="search" id="q" placeholder="חפש מחלה, פרוצדורה או משפחה (עברית או אנגלית)" value="${esc(app._q||'')}">
+    <div class="row" style="margin:10px 0"><div class="seg grow" id="flt">
+      <button data-f="all" class="${(app._f||'all')==='all'?'on':''}">הכל</button>
+      <button data-f="on" class="${app._f==='on'?'on':''}">ברוטציה</button>
+      <button data-f="off" class="${app._f==='off'?'on':''}">לא פעילים</button></div>
+      <button class="btn sm" data-a="new">+ נושא</button></div>
+    <div class="card" style="padding:4px 16px"><div class="list" id="res"></div></div>`;
+  const draw = () => {
+    const q=($("#q").value||"").trim().toLowerCase(); app._q=$("#q").value; const f=app._f||"all";
+    const list = topics().filter(t => match(t,q) && (f==="all" || (f==="on")===isEnabled(t.id)));
+    const fam = {}; list.forEach(t => (fam[t.family||"אחר"] ||= []).push(t));
+    $("#res").innerHTML = list.length ? Object.entries(fam).map(([f,ts]) =>
+      `<div class="small muted" style="padding-top:10px">${esc(f)}</div>` + ts.map(t => {
+        const c=counts({topic:t.id});
+        return `<div class="item"><div class="grow" data-open="${t.id}" style="cursor:pointer"><div class="title">${esc(t.he)}</div>
+          <div class="sub"><span class="ltr">${esc(t.name)}</span> · ${t.cards.length} כרטיסים${c.learned?` · ${c.learned} בלמידה`:''}</div></div>
+          <label class="switch"><input type="checkbox" data-tog="${t.id}" ${isEnabled(t.id)?'checked':''}><span></span></label></div>`; }).join("")).join("")
+      : `<p class="muted" style="padding:12px 0">לא נמצא. אפשר ליצור נושא חדש עם הכפתור "+ נושא".</p>`;
+  };
+  draw(); $("#q").oninput=draw;
+  $("#view").onclick = e => {
+    const f=e.target.closest("[data-f]"); if(f){ app._f=f.dataset.f; VIEWS.search(); return; }
+    const o=e.target.closest("[data-open]"); if(o){ app.topicFilter=o.dataset.open; topicPage(o.dataset.open); return; }
+    if(e.target.closest('[data-a="new"]')) newTopicSheet();
+  };
+  $("#view").onchange = e => { const t=e.target.closest("[data-tog]"); if(t){ S().enabled[t.dataset.tog]=t.checked; if(!t.checked) delete S().enabled[t.dataset.tog]; save(); toast(t.checked?"נוסף לרוטציה":"הוסר מהרוטציה"); } };
+};
+function topicPage(tid){
+  const t=topicById(tid); if(!t){ app.topicFilter=null; return VIEWS.search(); }
+  const c=counts({topic:tid});
+  $("#view").innerHTML = `
+    <button class="btn sm" data-a="back">→ חזרה לחיפוש</button>
+    <div class="card" style="margin-top:10px">
+      <h1>${esc(t.he)}</h1><div class="muted small ltr" style="text-align:right">${esc(t.name)}${t.source?' · '+esc(t.source):''}</div>
+      <div class="row" style="margin-top:12px"><span class="grow">ברוטציה</span><label class="switch"><input type="checkbox" id="tog" ${isEnabled(tid)?'checked':''}><span></span></label></div>
+      <div class="stats3"><div class="stat"><b>${c.fresh}</b><span class="small muted">חדשים</span></div><div class="stat"><b>${c.learned}</b><span class="small muted">בלמידה</span></div><div class="stat"><b>${c.suspended}</b><span class="small muted">מושהים</span></div></div>
+      <div class="row"><button class="btn primary grow" data-a="practice">תרגל רק את הנושא</button><button class="btn" data-a="summary">כרטיס סיכום</button></div>
+    </div>
+    <div class="card"><div class="row"><h2 class="grow" style="margin:0">הכרטיסים</h2><button class="btn sm" data-a="add">+ כרטיס</button></div>
+      <div class="list">${t.cards.filter(cd => !(cs(tid+"/"+cd.id)||{}).replaced).map(cd => { const st=cs(tid+"/"+cd.id)||null;
+        const chip = st&&st.suspended ? '<span class="chip sus">מושהה</span>' : st ? `<span class="chip on">חזרה בעוד ${fmtIvl(Math.max(0,(st.due-Date.now())/DAY))}</span>` : '<span class="chip">חדש</span>';
+        return `<div class="item"><div class="grow"><div>${esc(cd.q)}</div><div class="sub">${typeName(cd.t)} ${chip}</div></div>
+          ${st&&st.suspended?`<button class="btn sm" data-un="${cd.id}">החזר</button>`:`<button class="btn sm" data-sus="${cd.id}">השהה</button>`}
+          <button class="btn sm" data-ed="${cd.id}">ערוך</button></div>`; }).join("")}</div></div>
+    <div class="card"><h2>ההערות שלי</h2><textarea id="notes" placeholder="דברים שחשוב לי לזכור על הנושא">${esc((t.mine&&t.mine.notes)||'')}</textarea></div>`;
+  $("#tog").onchange = e => { if(e.target.checked) S().enabled[tid]=true; else delete S().enabled[tid]; save(); };
+  $("#notes").onchange = e => { customFor(tid).mine = Object.assign(customFor(tid).mine||{}, {notes:e.target.value}); save(); toast("נשמר"); };
+  $("#view").onclick = e => {
+    const a=e.target.closest("[data-a]");
+    if(a){ const act=a.dataset.a;
+      if(act==="back"){ app.topicFilter=null; VIEWS.search(); }
+      else if(act==="practice") startSession({topic:tid});
+      else if(act==="summary") summarySheet(tid);
+      else if(act==="add") editCardSheet(tid, null);
+      return; }
+    const sb=e.target.closest("[data-sus]"), un=e.target.closest("[data-un]"), ed=e.target.closest("[data-ed]");
+    if(sb){ const k=tid+"/"+sb.dataset.sus; S().cards[k]=Object.assign(S().cards[k]||{ease:2.5,ivl:0,reps:0,lapses:0,due:0},{suspended:true}); save(); topicPage(tid); }
+    if(un){ const k=tid+"/"+un.dataset.un; delete S().cards[k].suspended; if(!S().cards[k].reps) delete S().cards[k]; save(); topicPage(tid); }
+    if(ed) editCardSheet(tid, ed.dataset.ed);
+  };
+}
+function customFor(tid){
+  const cu=S().custom.topics; let c=cu.find(x=>x.id===tid);
+  if(!c){ c={id:tid, cards:[]}; cu.push(c); }
+  return c;
+}
+function newTopicSheet(){
+  openSheet(`<h2>נושא חדש</h2>
+    <label class="f">שם בעברית</label><input type="text" id="nh">
+    <label class="f">שם באנגלית</label><input type="text" id="ne" dir="ltr">
+    <label class="f">משפחה / מערכת</label><input type="text" id="nf" placeholder="למשל: גסטרו">
+    <label class="f">כרטיס סיכום (טקסט חופשי)</label><textarea id="ns"></textarea>
+    <div class="row" style="margin-top:12px"><button class="btn primary grow" id="ok">צור</button><button class="btn" onclick="closeSheet()">ביטול</button></div>`);
+  $("#ok").onclick = () => {
+    const he=$("#nh").value.trim(); if(!he){ toast("צריך שם"); return; }
+    const id="u"+Date.now().toString(36);
+    S().custom.topics.push({id, he, name:$("#ne").value.trim(), family:$("#nf").value.trim()||"הנושאים שלי", summary: $("#ns").value.trim()?`<p>${esc($("#ns").value.trim()).replace(/\n/g,"<br>")}</p>`:"", source:"שלי", cards:[]});
+    S().enabled[id]=true; save(); closeSheet(); app.topicFilter=id; topicPage(id);
+  };
+}
+function editCardSheet(tid, cid){
+  const t=topicById(tid); const card = cid ? t.cards.find(c=>c.id===cid) : {t:"flash", q:"", a:""};
+  const isBase = cid && !(customFor(tid).cards||[]).some(c=>c.id===cid) && !t.custom;
+  openSheet(`<h2>${cid?'עריכת כרטיס':'כרטיס חדש'}</h2>
+    ${isBase?'<p class="small muted">זה כרטיס מחבילת התוכן. השינוי יישמר אצלך כגרסה שלך והמקור יוסתר.</p>':''}
+    <div class="seg" id="ct"><button data-t="flash">כרטיסייה</button><button data-t="mcq">אמריקאית</button><button data-t="num">מספרית</button></div>
+    <label class="f">שאלה</label><textarea id="cq">${esc(card.q)}</textarea>
+    <div id="cfields"></div>
+    <label class="f">הסבר (לא חובה)</label><textarea id="cexp">${esc(card.e||'')}</textarea>
+    <div class="row" style="margin-top:12px"><button class="btn primary grow" id="ok">שמור</button><button class="btn" onclick="closeSheet()">ביטול</button></div>`);
+  let type=card.t;
+  const fields = () => {
+    document.querySelectorAll("#ct button").forEach(b=>b.classList.toggle("on", b.dataset.t===type));
+    if(type==="flash") $("#cfields").innerHTML=`<label class="f">תשובה</label><textarea id="ca">${esc(card.a||'')}</textarea>`;
+    if(type==="mcq") $("#cfields").innerHTML=`<label class="f">אפשרויות (סמן את הנכונה)</label>`+[0,1,2,3,4].map(i=>`<div class="row" style="margin-bottom:6px"><input type="radio" name="cc" value="${i}" ${card.c===i?'checked':''}><input type="text" class="grow co" value="${esc((card.o||[])[i]||'')}"></div>`).join("");
+    if(type==="num") $("#cfields").innerHTML=`<label class="f">תשובה מספרית</label><input type="number" step="any" id="cv" value="${card.v??''}"><label class="f">טווח סטייה מותר (±)</label><input type="number" step="any" id="ctol" value="${card.tol??0}"><label class="f">יחידה</label><input type="text" id="cu" value="${esc(card.u||'')}">`;
+  };
+  fields();
+  $("#ct").onclick = e => { const b=e.target.closest("button"); if(b){ type=b.dataset.t; fields(); } };
+  $("#ok").onclick = () => {
+    const nc={id: cid && !isBase ? cid : "c"+Date.now().toString(36), t:type, q:$("#cq").value.trim(), e:$("#cexp").value.trim()};
+    if(!nc.q){ toast("צריך שאלה"); return; }
+    if(type==="flash") nc.a=$("#ca").value.trim();
+    if(type==="mcq"){ nc.o=[...document.querySelectorAll(".co")].map(i=>i.value.trim()).filter(Boolean); const r=document.querySelector('input[name=cc]:checked'); nc.c=r?+r.value:0; if(nc.o.length<2){ toast("צריך לפחות 2 אפשרויות"); return; } }
+    if(type==="num"){ nc.v=parseFloat($("#cv").value); nc.tol=parseFloat($("#ctol").value)||0; nc.u=$("#cu").value.trim(); if(isNaN(nc.v)){ toast("צריך מספר"); return; } }
+    const target = customFor(tid); target.cards = target.cards || [];
+    const i = target.cards.findIndex(c=>c.id===nc.id);
+    if(i>=0) target.cards[i]=nc; else target.cards.push(nc);
+    if(isBase){ // hide the original by suspending it; the edited copy takes its place
+      const k=tid+"/"+cid; S().cards[k]=Object.assign(S().cards[k]||{ease:2.5,ivl:0,reps:0,lapses:0,due:0},{suspended:true,replaced:true});
+    }
+    save(); closeSheet(); toast("נשמר");
+    if(app.tab==="search") topicPage(tid);
+  };
+}
+
+/* ---------- stats ---------- */
+VIEWS.stats = function(){
+  const log=S().log; const t0=todayStart();
+  const days=[...Array(14)].map((_,i)=>{ const s=t0-(13-i)*DAY; const L=log.filter(l=>l.t>=s&&l.t<s+DAY); return {d:new Date(s), n:L.length}; });
+  const max=Math.max(1,...days.map(d=>d.n));
+  const ok=log.filter(l=>l.ok).length;
+  let streak=0; for(let i=0;;i++){ const s=t0-i*DAY; if(log.some(l=>l.t>=s&&l.t<s+DAY)) streak++; else if(i>0) break; else continue; if(i>400) break; }
+  const byTopic = topics().filter(t=>t.cards.some(c=>cs(t.id+"/"+c.id))).map(t=>{
+    const L=log.filter(l=>l.k.startsWith(t.id+"/")); const acc=L.length?L.filter(l=>l.ok&&l.r!=="hard").length/L.length:0;
+    const learned=t.cards.filter(c=>{const s=cs(t.id+"/"+c.id); return s&&s.ivl>=7;}).length;
+    return {t, acc, n:L.length, mastery: learned/t.cards.length};
+  }).sort((a,b)=>a.acc-b.acc);
+  const forecast=[...Array(7)].map((_,i)=>{ const s=t0+i*DAY; return Object.entries(S().cards).filter(([k,c])=>!c.suspended && (i===0? c.due<s+DAY : c.due>=s&&c.due<s+DAY)).length; });
+  $("#view").innerHTML = `
+    <div class="card"><h2>${EXAMS[app.exam].name}: סיכום</h2>
+      <div class="stats3"><div class="stat"><b>${log.length}</b><span class="small muted">תשובות</span></div>
+      <div class="stat"><b>${log.length?Math.round(100*ok/log.length):0}%</b><span class="small muted">בלי טעות</span></div>
+      <div class="stat"><b>${streak}</b><span class="small muted">ימים ברצף</span></div></div></div>
+    <div class="card"><h2>14 הימים האחרונים</h2>
+      <div class="bars" dir="ltr">${days.map(d=>`<div style="height:${100*d.n/max}%">${d.n?`<span>${d.n}</span>`:''}</div>`).join("")}</div>
+      <div class="barlbl" dir="ltr">${days.map(d=>`<span>${d.d.getDate()}</span>`).join("")}</div></div>
+    <div class="card"><h2>עומס חזרות צפוי</h2><div class="barlbl" style="font-size:13px">${["היום","מחר","+2","+3","+4","+5","+6"].map((l,i)=>`<span><b style="font-size:16px;color:var(--text)">${forecast[i]}</b><br>${l}</span>`).join("")}</div></div>
+    <div class="card"><h2>לפי נושא</h2><p class="small muted" style="margin-top:-6px">מהחלש לחזק. שליטה = כרטיסים שהמרווח שלהם כבר שבוע ומעלה.</p>
+      <div class="list">${byTopic.length? byTopic.map(b=>`<div class="item" data-t="${b.t.id}" style="cursor:pointer"><div class="grow"><div class="title">${esc(b.t.he)}</div>
+        <div class="sub">${b.n} תשובות · ${Math.round(100*b.acc)}% נכון וקל/בינוני · שליטה ${Math.round(100*b.mastery)}%</div>
+        <div class="meter"><i style="width:${Math.round(100*b.mastery)}%"></i></div></div></div>`).join("") : '<p class="muted">עוד אין נתונים. אחרי כמה סבבים יופיעו כאן הנושאים החלשים.</p>'}</div></div>`;
+  $("#view").onclick = e => { const it=e.target.closest("[data-t]"); if(it){ app.topicFilter=it.dataset.t; go("search"); } };
+};
+
+/* ---------- settings ---------- */
+VIEWS.settings = function(){
+  const st=S(); const theme=store.get("mf:theme","auto");
+  $("#view").innerHTML = `
+    <div class="card"><h2>תרגול (${EXAMS[app.exam].name})</h2>
+      <label class="f">כרטיסים חדשים ביום</label><input type="number" id="npd" min="0" value="${st.settings.newPerDay}">
+      <div class="row" style="margin-top:12px"><button class="btn sm" data-a="allon">הפעל את כל הנושאים</button><button class="btn sm" data-a="alloff">נטרל את כל הנושאים</button></div></div>
+    <div class="card"><h2>תצוגה</h2><div class="seg" id="th">
+      <button data-th="auto" class="${theme==='auto'?'on':''}">אוטומטי</button><button data-th="light" class="${theme==='light'?'on':''}">בהיר</button><button data-th="dark" class="${theme==='dark'?'on':''}">כהה</button></div></div>
+    <div class="card"><h2>גיבוי וסנכרון</h2>
+      <p class="small muted">ההתקדמות נשמרת רק בטלפון הזה. כדאי לייצא גיבוי מדי פעם, וכך גם מעבירים התקדמות למכשיר אחר.</p>
+      <div class="row"><button class="btn sm" data-a="export">ייצא גיבוי</button><button class="btn sm" data-a="import">ייבא גיבוי</button><button class="btn sm" data-a="deck">ייבא חבילת כרטיסים</button></div>
+      <input type="file" id="file" accept="application/json,.json" class="hidden"></div>
+    <div class="card"><h2>תוכן</h2><p class="small muted">חבילות התוכן מתעדכנות אוטומטית כשיש אינטרנט. ההתקדמות שלך לא נמחקת בעדכון.</p>
+      <button class="btn sm" data-a="refresh">בדוק עדכוני תוכן עכשיו</button>
+      <p class="small muted" id="ver"></p></div>
+    <div class="card"><h2>איפוס</h2><button class="btn sm" data-a="reset" style="color:var(--bad)">אפס את ההתקדמות ב${EXAMS[app.exam].name}</button></div>`;
+  const d=app.decks[app.exam]; $("#ver").textContent = d && d.version ? `גרסת תוכן: ${d.version} · ${topics().length} נושאים · ${allCards().length} כרטיסים` : "";
+  $("#npd").onchange = e => { st.settings.newPerDay=Math.max(0,parseInt(e.target.value)||0); save(); toast("נשמר"); };
+  $("#th").onclick = e => { const b=e.target.closest("[data-th]"); if(!b) return; store.set("mf:theme",b.dataset.th); applyTheme(); VIEWS.settings(); };
+  let mode=null;
+  $("#file").onchange = async e => {
+    const f=e.target.files[0]; if(!f) return; let data; try{ data=JSON.parse(await f.text()); }catch(err){ toast("הקובץ לא תקין"); return; }
+    if(mode==="import"){
+      if(data.app!=="med-final") return toast("זה לא קובץ גיבוי של האפליקציה");
+      Object.keys(EXAMS).forEach(k=>{ if(data.exams[k]) store.set(stateKey(k), data.exams[k]); }); app._st=null; toast("הגיבוי שוחזר"); go("home");
+    } else {
+      const ts = data.topics || (Array.isArray(data)?data:null); if(!ts) return toast("לא נמצאו נושאים בקובץ");
+      ts.forEach(t=>{ const cu=S().custom.topics; const i=cu.findIndex(x=>x.id===t.id); if(i>=0) cu[i]=t; else cu.push(t); }); save(); toast(`נוספו ${ts.length} נושאים`);
+    }
+    e.target.value="";
+  };
+  $("#view").onclick = async e => {
+    const a=e.target.closest("[data-a]"); if(!a) return; const act=a.dataset.a;
+    if(act==="allon"){ topics().forEach(t=>st.enabled[t.id]=true); save(); toast("כל הנושאים ברוטציה"); }
+    if(act==="alloff"){ st.enabled={}; save(); toast("כל הנושאים נוטרלו"); }
+    if(act==="export"){ const out={app:"med-final", at:new Date().toISOString(), exams:{}}; Object.keys(EXAMS).forEach(k=>out.exams[k]=store.get(stateKey(k),null)); download(`גיבוי-תרגול-גמר-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(out)); }
+    if(act==="import"||act==="deck"){ mode=act; $("#file").click(); }
+    if(act==="refresh"){ delete app.decks[app.exam]; await loadDeck(app.exam); toast(navigator.onLine?"התוכן עודכן":"אין אינטרנט, נשאר התוכן השמור"); VIEWS.settings(); }
+    if(act==="reset"){ if(!a.dataset.sure){ a.dataset.sure="1"; a.textContent="בטוח? לחץ שוב כדי למחוק הכל (התקדמות, הערות וכרטיסים שיצרת)"; return; } { store.set(stateKey(app.exam), emptyState()); app._st=null; toast("אופס"); go("home"); } }
+  };
+};
+function download(name, text){ const b=new Blob([text],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
+function applyTheme(){ const t=store.get("mf:theme","auto"); if(t==="auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme",t); }
+
+/* ---------- boot ---------- */
+(async function(){
+  applyTheme();
+  if(!EXAMS[app.exam]) app.exam="internal";
+  renderChrome();
+  await loadDeck(app.exam);
+  go("home");
+  Object.keys(EXAMS).forEach(k => loadDeck(k)); // warm all three so they work offline
+  if("serviceWorker" in navigator){ try{ await navigator.serviceWorker.register("sw.js"); }catch(e){} }
+  if(navigator.storage && navigator.storage.persist){ try{ navigator.storage.persist(); }catch(e){} }
+})();
+</script>
+</body>
+</html>
