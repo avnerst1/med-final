@@ -1,5 +1,6 @@
 from common import Topic, write
 import internal_renal
+import internal_heme
 
 SRC = "Harrison 22e"
 T = []
@@ -184,8 +185,15 @@ t.F("מנה 4 גורמי סיכון ל-osmotic demyelination syndrome.", "נתר
 T.append(t)
 
 T.extend(internal_renal.topics())
+T.extend(internal_heme.topics())
 
 OUTLINE = [
+    ("המטולוגיה ואונקולוגיה", [
+        ("אנמיות", ["anem", "ida", "thal", "mega", "hemol", "sickle"]),
+        ("כשל מח עצם", ["aplas"]),
+        ("לוקמיות", ["aml", "all", "cml", "cll"]),
+        ("לימפומות", ["hodg", "nhl"]),
+    ]),
     ("מחלות זיהומיות", [("אנדוקרדיטיס זיהומית", ["ie"])]),
     ("טיפול נמרץ", [("אלח דם וספטיק שוק", ["sepsis"])]),
     ("מערכת הלב וכלי הדם", [("אי-ספיקת לב", ["hf"]), ("תרומבואמבוליזם ורידי", ["pe"])]),
@@ -198,8 +206,8 @@ OUTLINE = [
         ("מחלות גלומרולריות", ["glom", "psgn", "iga", "rpgn", "lupn", "mcdfsgs", "memb", "dkd", "alport"]),
     ]),
     ("מערכת העיכול", [("מחלות הלבלב", ["panc"]), ("מחלות הכבד", ["cirr"])]),
-    ("מחלות ראומטולוגיות", [("דלקת מפרקים שגרונית", ["ra"]), ("זאבת", ["sle"])]),
+    ("מחלות אימוניות וראומטולוגיות", [("דלקת מפרקים שגרונית", ["ra"]), ("זאבת", ["sle"]), ("סרקואידוזיס", ["sarc"])]),
     ("אנדוקרינולוגיה ומטבוליזם", [("סוכרת", ["dka"])]),
 ]
 
-write("internal", "2026-10-20.3", T, OUTLINE)
+write("internal", "2026-10-20.4", T, OUTLINE)
