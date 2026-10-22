@@ -126,7 +126,7 @@ const ICONS = {
   stats:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
-const TABS = [["home","בית"],["practice","תרגול"],["search","חיפוש"],["stats","נתונים"],["settings","הגדרות"]];
+const TABS = [["home","בית"],["practice","תרגול"],["search","נושאים"],["stats","נתונים"],["settings","הגדרות"]];
 
 /* ---------- storage (each exam fully separate) ---------- */
 const store = {
@@ -270,8 +270,9 @@ VIEWS.home = function(){
         <div class="stat"><b>${today}</b><span class="small muted">נענו היום</span></div>
       </div>
       ${en===0 ? `<p class="muted">עדיין לא הוספת נושאים לרוטציה. היכנס לחיפוש והפעל מחלות שאתה רוצה לתרגל.</p>
-        <button class="btn primary block" data-act="search">לחיפוש נושאים</button>`
+        <button class="btn primary block" data-act="search">לבחירת נושאים</button>`
       : `<button class="btn primary block" data-act="start">התחל תרגול</button>
+         <button class="btn block" style="margin-top:8px" data-act="search">בחירת נושאים לתרגול</button>
          <p class="small muted" style="margin:8px 0 0">${en} נושאים ברוטציה · ${c.learned} כרטיסים בלמידה · ${c.suspended} מושהים</p>`}
     </div>
     <div class="card">
@@ -454,6 +455,7 @@ VIEWS.search = function(){
       <button data-f="on" class="${app._f==='on'?'on':''}">ברוטציה</button>
       <button data-f="off" class="${app._f==='off'?'on':''}">לא פעילים</button></div>
       <button class="btn sm" data-a="new">+ נושא</button></div>
+    <p class="small muted" style="margin:0 0 8px">המתג ליד חלק, פרק או נושא מוסיף אותו לתרגול או מוריד אותו. לחיצה על שם של חלק פותחת את הפרקים שלו.</p>
     <div class="card" style="padding:4px 16px"><div class="list" id="res"></div></div>`;
   const sw = (attr, on, partial) => `<label class="switch${partial?' partial':''}"><input type="checkbox" ${attr} ${on?'checked':''}><span></span></label>`;
   const draw = () => {

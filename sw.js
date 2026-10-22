@@ -1,5 +1,5 @@
 // App shell is cache-first (works offline); content files are network-first so updates arrive when online.
-const CACHE = "medfinal-v1";
+const CACHE = "medfinal-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png",
   "data/internal.json", "data/pediatrics.json", "data/surgery.json"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
