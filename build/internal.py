@@ -1,6 +1,7 @@
 from common import Topic, write
 import internal_renal
 import internal_heme
+import internal_perit
 
 SRC = "Harrison 22e"
 T = []
@@ -186,6 +187,7 @@ T.append(t)
 
 T.extend(internal_renal.topics())
 T.extend(internal_heme.topics())
+T.extend(internal_perit.topics())
 
 OUTLINE = [
     ("המטולוגיה ואונקולוגיה", [
@@ -205,9 +207,9 @@ OUTLINE = [
         ("סידן ומגנזיום", ["hca", "hypoca"]),
         ("מחלות גלומרולריות", ["glom", "psgn", "iga", "rpgn", "lupn", "mcdfsgs", "memb", "dkd", "alport"]),
     ]),
-    ("מערכת העיכול", [("מחלות הלבלב", ["panc"]), ("מחלות הכבד", ["cirr"])]),
+    ("מערכת העיכול", [("מחלות הלבלב", ["panc"]), ("מחלות הכבד", ["cirr"]), ("מחלות הצפק", ["perit"])]),
     ("מחלות אימוניות וראומטולוגיות", [("דלקת מפרקים שגרונית", ["ra"]), ("זאבת", ["sle"]), ("סרקואידוזיס", ["sarc"])]),
     ("אנדוקרינולוגיה ומטבוליזם", [("סוכרת", ["dka"])]),
 ]
 
-write("internal", "2026-10-20.4", T, OUTLINE)
+write("internal", "2026-11-02", T, OUTLINE)
